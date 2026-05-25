@@ -1,0 +1,44 @@
+# pi-extensions
+
+Personal extensions for the [pi coding agent](https://github.com/earendil-works/pi-coding-agent).
+
+This repo is a small pnpm workspace containing local TypeScript extensions that can be loaded by pi during development.
+
+## Extensions
+
+- `@tombell/pi-exit` — adds an `exit` command and handles plain `exit` input to shut down pi.
+- `@tombell/pi-plan-mode` — adds a read-only planning mode toggle via `/plan`, `ctrl+alt+p`, or `--plan`.
+- `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes their skills/prompts to pi.
+
+## Development
+
+Install dependencies:
+
+```sh
+pnpm install
+```
+
+Run checks:
+
+```sh
+pnpm lint
+pnpm typecheck
+pnpm fmt:check
+```
+
+Format and fix lint issues:
+
+```sh
+pnpm fmt
+pnpm lint:fix
+```
+
+## Loading an extension
+
+Each extension lives under `extensions/<name>` and exports a default pi extension function from `index.ts`.
+
+When developing locally, point pi at the extension package or add it to your pi configuration according to the pi extension loading docs.
+
+## License
+
+BSD-3-Clause. See [LICENSE](./LICENSE).

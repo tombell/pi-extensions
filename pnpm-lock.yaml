@@ -11,6 +11,9 @@ importers:
       '@earendil-works/pi-coding-agent':
         specifier: 0.75.5
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
+      '@earendil-works/pi-tui':
+        specifier: ^0.75.5
+        version: 0.75.5
       '@types/node':
         specifier: 25.9.1
         version: 25.9.1
@@ -24,19 +27,25 @@ importers:
         specifier: 6.0.3
         version: 6.0.3
 
-  extensions/codex-plugins:
+  extensions/pi-codex-plugins:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
-  extensions/exit:
+  extensions/pi-diff:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
-  extensions/plan-mode:
+  extensions/pi-exit:
+    dependencies:
+      '@earendil-works/pi-coding-agent':
+        specifier: '*'
+        version: 0.75.5(ws@8.21.0)(zod@4.4.3)
+
+  extensions/pi-plan-mode:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'

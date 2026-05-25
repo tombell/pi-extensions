@@ -8,6 +8,7 @@ This repo is a small pnpm workspace containing local TypeScript extensions that 
 
 - `@tombell/pi-exit` — adds an `exit` command and handles plain `exit` input to shut down pi.
 - `@tombell/pi-plan-mode` — adds a read-only planning mode toggle via `/plan`, `ctrl+alt+p`, or `--plan`.
+- `@tombell/pi-diff` — adds `/diff` and `/changed-files` commands for files edited/written in the current pi session.
 - `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes their skills/prompts to pi.
 
 ## Development

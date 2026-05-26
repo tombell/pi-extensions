@@ -1,0 +1,11 @@
+{
+  "name": "@tombell/pi-sessions-manager",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./index.ts",
+  "exports": "./index.ts",
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  }
+}

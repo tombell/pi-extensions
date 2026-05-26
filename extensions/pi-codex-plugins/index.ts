@@ -1,8 +1,8 @@
-import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
-
 import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync, existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
+
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const CODEX_HOME = process.env.CODEX_HOME || join(homedir(), ".codex");
 const OUT = join(homedir(), ".pi", "agent", "generated", "codex-plugins");

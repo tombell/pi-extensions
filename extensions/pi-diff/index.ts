@@ -1,7 +1,8 @@
+import { relative, resolve } from "node:path";
+
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
 
 import { Box, Text } from "@earendil-works/pi-tui";
-import { relative, resolve } from "node:path";
 
 const CUSTOM_TYPE = "pi-diff";
 const MAX_DIFF_CHARS = 60_000;

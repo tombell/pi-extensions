@@ -3,8 +3,15 @@ import { defineConfig } from "oxfmt";
 export default defineConfig({
   ignorePatterns: [],
   sortImports: {
+    customGroups: [
+      {
+        groupName: "node",
+        elementNamePattern: ["node:*"],
+      },
+    ],
     newlinesBetween: true,
     groups: [
+      "node",
       "type-import",
       ["value-builtin", "value-external"],
       "type-internal",

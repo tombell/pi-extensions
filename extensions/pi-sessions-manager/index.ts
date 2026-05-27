@@ -1,9 +1,20 @@
+import { stat } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import type { ExtensionAPI, ExtensionContext, SessionInfo } from "@earendil-works/pi-coding-agent";
+import type {
+  ExtensionAPI,
+  ExtensionContext,
+  SessionInfo,
+  ThemeColor,
+} from "@earendil-works/pi-coding-agent";
 
 import { SessionManager } from "@earendil-works/pi-coding-agent";
-import { type Focusable, matchesKey } from "@earendil-works/pi-tui";
+import {
+  type Focusable,
+  matchesKey,
+  truncateToWidth,
+  visibleWidth,
+} from "@earendil-works/pi-tui";
 
 type SessionListItem = {
   index: number;
@@ -15,6 +26,7 @@ type SessionListItem = {
   modified: Date;
   messageCount: number;
   firstMessage: string;
+  fileSize: number | undefined;
 };
 
 function cwdKey(cwd: string): string {
@@ -31,13 +43,35 @@ function truncate(text: string, max: number): string {
   return `${normalized.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
 }
 
+function formatFileSize(bytes: number | undefined): string {
+  if (bytes === undefined || !Number.isFinite(bytes)) {
+    return "unknown";
+  }
+
+  const units = ["B", "KB", "MB", "GB"];
+  let value = bytes;
+  let unitIndex = 0;
+
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex++;
+  }
+
+  const precision = value >= 100 || unitIndex === 0 ? 0 : 1;
+  return `${value.toFixed(precision)} ${units[unitIndex]}`;
+}
+
 function formatDate(value: Date | string): string {
   const d = value instanceof Date ? value : new Date(value);
   if (Number.isNaN(d.getTime())) return "unknown";
   return d.toLocaleString();
 }
 
-function toListItem(index: number, info: SessionInfo): SessionListItem {
+async function toListItem(index: number, info: SessionInfo): Promise<SessionListItem> {
+  const fileSize = await stat(info.path)
+    .then((value) => value.size)
+    .catch(() => undefined);
+
   return {
     index,
     path: info.path,
@@ -48,13 +82,30 @@ function toListItem(index: number, info: SessionInfo): SessionListItem {
     modified: info.modified,
     messageCount: info.messageCount,
     firstMessage: info.firstMessage,
+    fileSize,
   };
 }
 
-function formatMarkedLine(item: SessionListItem): string {
+function formatPickerLine(
+  item: SessionListItem,
+  isMarked: boolean,
+  isSelected: boolean,
+  theme: { fg: (color: ThemeColor, content: string) => string },
+): string {
   const idx = (item.index + 1).toString().padStart(3, "0");
-  const displayName = item.name ? `${item.name} ` : "";
-  return `${idx}. ${displayName}${shortId(item.id)} • ${item.messageCount} msgs • ${truncate(item.firstMessage, 48)} (${formatDate(item.modified)})`;
+  const displayName = item.name ? item.name : `-${item.id.slice(0, 8)}-`;
+  const checkbox = isMarked ? "[x]" : "[ ]";
+  const checkboxColor = isMarked ? "success" : "warning";
+  const nameColor = "accent";
+  const messageCountColor = isMarked ? "warning" : "muted";
+  const fileSize = isMarked ? theme.fg("warning", formatFileSize(item.fileSize)) : theme.fg("muted", formatFileSize(item.fileSize));
+
+  const body = `${idx}. ${theme.fg(nameColor, displayName)} • ${theme.fg("dim", shortId(item.id))} • ${theme.fg(messageCountColor, `${item.messageCount} msgs`)} • ${theme.fg("text", fileSize)} • ${theme.fg("text", truncate(item.firstMessage, 48))} ${theme.fg("dim", `(${formatDate(item.modified)})`)}`;
+
+  const line = `${theme.fg(checkboxColor, checkbox)} ${body}`;
+  const prefix = isSelected ? "> " : "  ";
+
+  return isSelected ? theme.fg("accent", `${prefix}${line}`) : `${prefix}${line}`;
 }
 
 class SessionPicker implements Focusable {
@@ -114,26 +165,35 @@ class SessionPicker implements Focusable {
     }
   }
 
-  render(_width: number): string[] {
+  render(width: number): string[] {
     const lines: string[] = [];
-    lines.push(
+
+    const truncateLine = (line: string): string => {
+      if (visibleWidth(line) <= width) {
+        return line;
+      }
+      return truncateToWidth(line, width, "…");
+    };
+
+    const header = this.ctx.ui.theme.fg(
+      "dim",
       "Mark/unmark sessions for deletion (↑/↓ select, space/enter toggle, enter done, esc close)",
     );
+    lines.push(truncateLine(header));
 
     for (let index = 0; index < this.sessions.length; index++) {
       const session = this.sessions[index]!;
       const isSelected = index === this.selected;
-      const checkbox = this.marked.has(session.path) ? "[x]" : "[ ]";
-      const prefix = isSelected ? "> " : "  ";
-      const line = `${prefix}${checkbox} ${formatMarkedLine(session)}`;
-      lines.push(isSelected ? this.ctx.ui.theme.fg("accent", line) : line);
+      const row = formatPickerLine(session, this.marked.has(session.path), isSelected, this.ctx.ui.theme);
+      lines.push(truncateLine(row));
     }
 
     const donePrefix = this.selected === this.doneIndex ? "> " : "  ";
     const doneLine = `${donePrefix}Done`;
-    lines.push(
-      this.selected === this.doneIndex ? this.ctx.ui.theme.fg("success", doneLine) : doneLine,
-    );
+    const doneRow = this.selected === this.doneIndex
+      ? this.ctx.ui.theme.fg("success", `${doneLine} (${this.marked.size} selected)`) :
+        this.ctx.ui.theme.fg("dim", `${doneLine}`);
+    lines.push(truncateLine(doneRow));
 
     return lines;
   }
@@ -170,7 +230,7 @@ export default function sessionManagerExtension(pi: ExtensionAPI): void {
 
   async function refreshSessions(ctx: ExtensionContext): Promise<SessionListItem[]> {
     const sessions = await SessionManager.list(ctx.cwd);
-    const mapped = sessions.map((session, index) => toListItem(index, session));
+    const mapped = await Promise.all(sessions.map((session, index) => toListItem(index, session)));
     latestByCwd.set(cwdKey(ctx.cwd), mapped);
     return mapped;
   }

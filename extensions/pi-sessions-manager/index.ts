@@ -156,10 +156,8 @@ class SessionPicker implements Focusable {
 
       if (this.marked.has(session.path)) {
         this.marked.delete(session.path);
-        this.ctx.ui.notify(`Unmarked session ${session.index + 1}`, "info");
       } else {
         this.marked.add(session.path);
-        this.ctx.ui.notify(`Marked session ${session.index + 1}`, "info");
       }
       this.invalidate();
     }

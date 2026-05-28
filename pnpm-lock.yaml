@@ -39,13 +39,13 @@ importers:
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
-  extensions/pi-enclosed-input:
+  extensions/pi-exit:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
-  extensions/pi-exit:
+  extensions/pi-input:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'

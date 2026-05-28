@@ -1,4 +1,4 @@
-# @tombell/pi-enclosed-input
+# @tombell/pi-input
 
 Replaces the default pi input editor with a fully enclosed box-style input field.
 
@@ -10,5 +10,5 @@ Replaces the default pi input editor with a fully enclosed box-style input field
 
 ## Install
 
-- From npm: `pi install npm:@tombell/pi-enclosed-input`
-- Local test: `pi -e ./extensions/pi-enclosed-input`
+- From npm: `pi install npm:@tombell/pi-input`
+- Local test: `pi -e ./extensions/pi-input`

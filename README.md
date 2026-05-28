@@ -10,6 +10,7 @@ This repo is a small pnpm workspace containing local TypeScript extensions that 
 - `@tombell/pi-plan` — adds a read-only planning mode toggle via `/plan`, `ctrl+alt+p`, or `--plan`.
 - `@tombell/pi-diff` — adds `/diff` and `/changed-files` commands for files edited/written in the current pi session.
 - `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes their skills/prompts to pi.
+- `@tombell/pi-input` — replaces the default pi input editor with a fully enclosed box-style input field.
 - `@tombell/pi-sessions` — list sessions for the current project/cwd and mark/delete old sessions.
 
 ## Development

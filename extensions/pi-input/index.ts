@@ -6,6 +6,8 @@ const TOP_LEFT_CORNER = "┌";
 const TOP_RIGHT_CORNER = "┐";
 const BOTTOM_LEFT_CORNER = "└";
 const BOTTOM_RIGHT_CORNER = "┘";
+const LEFT_TEE = "├";
+const RIGHT_TEE = "┤";
 
 class EnclosedInputEditor extends CustomEditor {
   render(width: number): string[] {
@@ -21,22 +23,33 @@ class EnclosedInputEditor extends CustomEditor {
     return innerLines.map((line, index) => {
       const isTop = index === 0;
       const isBottom = index === innerLines.length - 1;
-      const content = truncateToWidth(line, innerWidth);
-      const padded = content + " ".repeat(Math.max(0, innerWidth - visibleWidth(content)));
 
       if (isTop) {
-        return `${this.borderColor(TOP_LEFT_CORNER)}${padded}${this.borderColor(TOP_RIGHT_CORNER)}`;
+        return `${this.borderColor(TOP_LEFT_CORNER)}${this.fitLine(line, innerWidth, "─")}${this.borderColor(TOP_RIGHT_CORNER)}`;
       }
 
       if (isBottom) {
-        return `${this.borderColor(BOTTOM_LEFT_CORNER)}${padded}${this.borderColor(BOTTOM_RIGHT_CORNER)}`;
+        return `${this.borderColor(BOTTOM_LEFT_CORNER)}${this.fitLine(line, innerWidth, "─")}${this.borderColor(BOTTOM_RIGHT_CORNER)}`;
       }
 
-      const sideContent = " ".repeat(contentIndent) + truncateToWidth(line, editorWidth);
-      const sidePadded =
-        sideContent + " ".repeat(Math.max(0, innerWidth - visibleWidth(sideContent)));
-      return `${this.borderColor(VERTICAL_BORDER)}${sidePadded}${this.borderColor(VERTICAL_BORDER)}`;
+      if (this.isHorizontalBorder(line)) {
+        return `${this.borderColor(LEFT_TEE)}${this.fitLine(line, innerWidth, "─")}${this.borderColor(RIGHT_TEE)}`;
+      }
+
+      const content = " ".repeat(contentIndent) + truncateToWidth(line, editorWidth);
+      return `${this.borderColor(VERTICAL_BORDER)}${this.fitLine(content, innerWidth)}${this.borderColor(VERTICAL_BORDER)}`;
     });
+  }
+
+  private fitLine(line: string, width: number, fill = " "): string {
+    const content = truncateToWidth(line, width);
+    const padding = fill.repeat(Math.max(0, width - visibleWidth(content)));
+    return content + this.borderColor(padding);
+  }
+
+  private isHorizontalBorder(line: string): boolean {
+    const plain = line.replace(/\x1b\[[0-9;]*m/g, "").trim();
+    return plain.length > 0 && /^─+$/.test(plain);
   }
 }
 

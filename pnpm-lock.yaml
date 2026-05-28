@@ -39,6 +39,12 @@ importers:
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
+  extensions/pi-enclosed-input:
+    dependencies:
+      '@earendil-works/pi-coding-agent':
+        specifier: '*'
+        version: 0.75.5(ws@8.21.0)(zod@4.4.3)
+
   extensions/pi-exit:
     dependencies:
       '@earendil-works/pi-coding-agent':
@@ -46,6 +52,12 @@ importers:
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
   extensions/pi-plan-mode:
+    dependencies:
+      '@earendil-works/pi-coding-agent':
+        specifier: '*'
+        version: 0.75.5(ws@8.21.0)(zod@4.4.3)
+
+  extensions/pi-sessions:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'

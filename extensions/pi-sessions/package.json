@@ -1,17 +1,19 @@
 {
-  "name": "@tombell/pi-sessions-manager",
+  "name": "@tombell/pi-sessions",
   "version": "0.0.1",
   "private": false,
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",
-  "pi": {
-    "extensions": ["./index.ts"]
+  "publishConfig": {
+    "access": "public"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
   },
-  "publishConfig": {
-    "access": "public"
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
   }
 }

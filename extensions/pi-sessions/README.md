@@ -1,4 +1,4 @@
-# @tombell/pi-sessions-manager
+# @tombell/pi-sessions
 
 Interactive session manager for Pi projects/cwd.
 
@@ -25,5 +25,5 @@ Run in interactive mode (TUI required):
 
 ## Install
 
-- From npm: `pi install npm:@tombell/pi-sessions-manager`
-- Local/quick test: `pi -e path/to/pi-sessions-manager`
+- From npm: `pi install npm:@tombell/pi-sessions`
+- Local/quick test: `pi -e path/to/pi-sessions`

@@ -51,7 +51,7 @@ importers:
         specifier: '*'
         version: 0.75.5(ws@8.21.0)(zod@4.4.3)
 
-  extensions/pi-plan-mode:
+  extensions/pi-plan:
     dependencies:
       '@earendil-works/pi-coding-agent':
         specifier: '*'

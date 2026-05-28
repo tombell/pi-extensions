@@ -1,4 +1,4 @@
-# @tombell/pi-plan-mode
+# @tombell/pi-plan
 
 Adds a read-only planning mode for safe investigation before edits.
 
@@ -23,5 +23,5 @@ Adds a read-only planning mode for safe investigation before edits.
 
 ## Install
 
-- From npm: `pi install npm:@tombell/pi-plan-mode`
-- Local/quick test: `pi -e path/to/pi-plan-mode`
+- From npm: `pi install npm:@tombell/pi-plan`
+- Local/quick test: `pi -e path/to/pi-plan`

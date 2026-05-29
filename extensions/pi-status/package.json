@@ -1,6 +1,6 @@
 {
   "name": "@tombell/pi-status",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "private": false,
   "description": "Slim minimal status bar for Pi",
   "keywords": [

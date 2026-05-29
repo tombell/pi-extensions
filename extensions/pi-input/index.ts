@@ -48,6 +48,7 @@ class EnclosedInputEditor extends CustomEditor {
   }
 
   private isHorizontalBorder(line: string): boolean {
+    // oxlint-disable-next-line no-control-regex
     const plain = line.replace(/\x1b\[[0-9;]*m/g, "").trim();
     return plain.length > 0 && /^─+$/.test(plain);
   }

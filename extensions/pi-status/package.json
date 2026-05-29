@@ -1,0 +1,23 @@
+{
+  "name": "@tombell/pi-status",
+  "version": "0.0.1",
+  "private": false,
+  "description": "Slim minimal status bar for Pi",
+  "keywords": [
+    "pi-package"
+  ],
+  "type": "module",
+  "main": "./index.ts",
+  "exports": "./index.ts",
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*"
+  },
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  }
+}

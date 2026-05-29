@@ -12,6 +12,7 @@ This repo is a small pnpm workspace containing local TypeScript extensions that 
 - `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes their skills/prompts to pi.
 - `@tombell/pi-input` — replaces the default pi input editor with a fully enclosed box-style input field.
 - `@tombell/pi-sessions` — list sessions for the current project/cwd and mark/delete old sessions.
+- `@tombell/pi-status` — replaces Pi's footer with a slim minimal status bar.
 
 ## Development
 

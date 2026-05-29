@@ -1,7 +1,10 @@
 {
   "name": "@tombell/pi-input",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "private": false,
+  "keywords": [
+    "pi-package"
+  ],
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

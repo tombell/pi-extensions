@@ -1,22 +1,21 @@
 # @tombell/pi-diff
 
-Shows git diff output for files touched by Pi during the current session and lists those files.
+Shows `git diff` output for files changed during the current Pi session.
 
 ## Features
 
 - Tracks file paths from successful `edit` and `write` tool calls.
-- `/diff` command
-  - defaults to session-tracked changed files
-  - `--all` or `all`: show all dirty files in the repo
-  - `--stat` or `stat`: show unified diff summary
-- `/changed-files` command
-  - lists all session-tracked edited/written files
-- Custom renderer with colored diff output.
-
-## Commands
-
-- `/diff [all|stat|all stat]`
-- `/changed-files`
+- Adds two commands:
+  - `/diff`
+  - `/changed-files`
+- `/diff`
+  - defaults to session-tracked files
+  - shows a selector when multiple files are available
+  - falls back to all dirty files if no session files are tracked
+  - `--all` / `all`: include every dirty repo file
+  - `--stat` / `stat`: show unified diff summary
+- `/changed-files`: lists all edited/written files tracked this session
+- Custom renderer with colored diff output
 
 ## Install
 

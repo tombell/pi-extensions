@@ -9,6 +9,10 @@ const MAX_DIFF_CHARS = 60_000;
 
 type MaybePathInput = { path?: unknown };
 
+type DiffTargetResult =
+  | { type: "all"; paths: string[]; titleContext: string }
+  | { type: "single"; paths: string[]; titleContext: string };
+
 function normalizeChangedPath(cwd: string, path: unknown): string | undefined {
   if (typeof path !== "string" || path.trim() === "") return undefined;
 
@@ -44,6 +48,21 @@ async function isGitRepository(pi: ExtensionAPI, ctx: ExtensionContext): Promise
   return result.code === 0 && result.stdout.trim() === "true";
 }
 
+async function listDirtyPaths(pi: ExtensionAPI, ctx: ExtensionContext): Promise<string[]> {
+  const result = await pi.exec("git", ["diff", "--no-ext-diff", "--name-only"], {
+    cwd: ctx.cwd,
+    signal: ctx.signal,
+    timeout: 30_000,
+  });
+
+  if (result.code !== 0) return [];
+
+  return result.stdout
+    .split(/\r?\n/)
+    .map((path) => path.trim())
+    .filter(Boolean);
+}
+
 async function buildDiff(pi: ExtensionAPI, ctx: ExtensionContext, paths: string[], stat: boolean) {
   const args = ["diff", "--no-ext-diff", "--color=never"];
   if (stat) args.push("--stat");
@@ -76,6 +95,38 @@ function colorizeDiffLine(line: string, theme: ExtensionContext["ui"]["theme"]):
     return theme.fg("dim", line);
   }
   return line;
+}
+
+async function pickDiffTarget(
+  ctx: ExtensionContext,
+  files: string[],
+  all: boolean,
+  stat: boolean,
+): Promise<DiffTargetResult | undefined> {
+  if (all) {
+    return { type: "all", paths: files, titleContext: "all dirty files" };
+  }
+
+  if (files.length === 0) {
+    return undefined;
+  }
+
+  if (files.length === 1) {
+    const path = files[0];
+    return { type: "single", paths: [path], titleContext: path };
+  }
+
+  if (!ctx.hasUI) {
+    ctx.ui.notify("Multiple files changed. Use --all to see everything at once.", "info");
+    const path = files[0];
+    return { type: "single", paths: [path], titleContext: path };
+  }
+
+  const title = stat ? "Pick a file to show git --stat" : "Pick a file to show diff";
+  const selected = await ctx.ui.select(title, files);
+  if (!selected) return undefined;
+
+  return { type: "single", paths: [selected], titleContext: selected };
 }
 
 export default function piDiff(pi: ExtensionAPI): void {
@@ -128,22 +179,24 @@ export default function piDiff(pi: ExtensionAPI): void {
       }
 
       const trackedPaths = [...changedPaths].toSorted();
-      const paths = options.all || trackedPaths.length === 0 ? [] : trackedPaths;
-      const usedFallback = !options.all && trackedPaths.length === 0;
+      const pathsToChooseFrom =
+        options.all || trackedPaths.length === 0 ? await listDirtyPaths(pi, ctx) : trackedPaths;
 
-      const result = await buildDiff(pi, ctx, paths, options.stat);
+      const target = await pickDiffTarget(ctx, pathsToChooseFrom, options.all, options.stat);
+      if (!target) {
+        ctx.ui.notify("No files to diff.", "info");
+        return;
+      }
+
+      const result = await buildDiff(pi, ctx, target.paths, options.stat);
       const output = result.stdout || result.stderr;
       if (result.code !== 0) {
         ctx.ui.notify(`git diff failed: ${output.trim() || `exit code ${result.code}`}`, "error");
         return;
       }
 
-      const scope = options.all
-        ? "all dirty files"
-        : usedFallback
-          ? "all dirty files (no session-tracked files yet)"
-          : `${paths.length} session file${paths.length === 1 ? "" : "s"}`;
-      showDiff(pi, ctx, `Diff for ${scope}`, output);
+      const scope = target.type === "all" ? "all dirty files" : target.titleContext;
+      showDiff(pi, ctx, `Diff for ${scope}${options.stat ? " (stat)" : ""}`, output);
     },
   });
 

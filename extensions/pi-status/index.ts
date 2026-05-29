@@ -31,7 +31,12 @@ export default function piStatus(pi: ExtensionAPI): void {
     ].join(" ");
   }
 
-  let thinkingLevel = "";
+  function formatModel(theme: ExtensionContext["ui"]["theme"], model: string, thinking: string): string {
+    const text = trunc(`${model}${thinking}`, 42);
+    return thinkingLevel ? theme.getThinkingBorderColor(thinkingLevel)(text) : theme.fg("dim", text);
+  }
+
+  let thinkingLevel: ReturnType<ExtensionAPI["getThinkingLevel"]> | undefined;
   let vcs: VcsInfo = { kind: "none", label: "" };
   let diff: DiffInfo = { files: 0, insertions: 0, deletions: 0 };
   const changedPaths = new Set<string>();
@@ -56,6 +61,7 @@ export default function piStatus(pi: ExtensionAPI): void {
 
   pi.on("session_start", async (_event, ctx) => {
     changedPaths.clear();
+    thinkingLevel = pi.getThinkingLevel();
     if (!ctx.hasUI) return;
 
     let disposed = false;
@@ -85,7 +91,13 @@ export default function piStatus(pi: ExtensionAPI): void {
           const costText = usesSubscription(ctx.model?.provider)
             ? ""
             : ` $${usage.cost.toFixed(3)}`;
-          const usageText = `↑${fmtCount(usage.input)} ↓${fmtCount(usage.output)}${costText}`;
+          const usageText = [
+            `${theme.fg("accent", "↑")}${theme.fg("dim", fmtCount(usage.input))}`,
+            `${theme.fg("success", "↓")}${theme.fg("dim", fmtCount(usage.output))}`,
+            costText ? theme.fg("dim", costText.trimStart()) : undefined,
+          ]
+            .filter((part): part is string => Boolean(part))
+            .join(" ");
           const contextWindow = ctx.model?.contextWindow;
           const contextText = usage.context
             ? `${fmtCount(usage.context)}${contextWindow ? `/${fmtCount(contextWindow)}` : ""}`
@@ -98,8 +110,8 @@ export default function piStatus(pi: ExtensionAPI): void {
             theme.fg("accent", cwd),
             sessionName ? theme.fg("muted", trunc(sessionName, 24)) : undefined,
             formatVcs(theme),
-            theme.fg("dim", trunc(`${model}${thinking}`, 42)),
-            theme.fg("dim", usageText),
+            formatModel(theme, model, thinking),
+            usageText,
             contextText ? theme.fg(contextTextColor, contextText) : undefined,
             formatDiffStats(theme),
           ].filter((part): part is string => Boolean(part));

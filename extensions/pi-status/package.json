@@ -6,6 +6,7 @@
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

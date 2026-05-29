@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-plan",
   "version": "0.0.2",
-  "description": "Read-only planning mode for safe investigation before editing",
   "private": false,
+  "description": "Read-only planning mode for safe investigation before editing",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

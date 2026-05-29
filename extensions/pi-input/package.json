@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-input",
   "version": "0.0.5",
-  "description": "Replace Pi's input editor with a boxed input field",
   "private": false,
+  "description": "Replace Pi's input editor with a boxed input field",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

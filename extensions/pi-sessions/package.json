@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-sessions",
   "version": "0.0.3",
-  "description": "Interactive session manager for Pi projects and directories",
   "private": false,
+  "description": "Interactive session manager for Pi projects and directories",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

@@ -4,6 +4,7 @@
   "private": true,
   "description": "Monorepo for pi coding agent extensions.",
   "license": "BSD-3",
+  "author": "Tom Bell",
   "type": "module",
   "scripts": {
     "fmt": "oxfmt --write .",

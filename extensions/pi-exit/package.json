@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-exit",
   "version": "0.0.2",
-  "description": "Quick command to exit Pi cleanly",
   "private": false,
+  "description": "Quick command to exit Pi cleanly",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-diff",
   "version": "0.0.2",
-  "description": "Show git diff for files changed during the current Pi session",
   "private": false,
+  "description": "Show git diff for files changed during the current Pi session",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

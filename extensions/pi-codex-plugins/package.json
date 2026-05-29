@@ -1,11 +1,12 @@
 {
   "name": "@tombell/pi-codex-plugins",
   "version": "0.0.2",
-  "description": "Discover enabled Codex plugins and expose them as Pi skills and prompts",
   "private": false,
+  "description": "Discover enabled Codex plugins and expose them as Pi skills and prompts",
   "keywords": [
     "pi-package"
   ],
+  "author": "Tom Bell",
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",

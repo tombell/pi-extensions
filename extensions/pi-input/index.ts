@@ -16,9 +16,7 @@ class EnclosedInputEditor extends CustomEditor {
     }
 
     const innerWidth = width - 2;
-    const contentIndent = 1;
-    const editorWidth = Math.max(1, innerWidth - contentIndent);
-    const innerLines = super.render(editorWidth);
+    const innerLines = super.render(innerWidth);
 
     return innerLines.map((line, index) => {
       const isTop = index === 0;
@@ -36,8 +34,7 @@ class EnclosedInputEditor extends CustomEditor {
         return `${this.borderColor(LEFT_TEE)}${this.fitLine(line, innerWidth, "─")}${this.borderColor(RIGHT_TEE)}`;
       }
 
-      const content = " ".repeat(contentIndent) + truncateToWidth(line, editorWidth);
-      return `${this.borderColor(VERTICAL_BORDER)}${this.fitLine(content, innerWidth)}${this.borderColor(VERTICAL_BORDER)}`;
+      return `${this.borderColor(VERTICAL_BORDER)}${truncateToWidth(line, innerWidth)}${this.borderColor(VERTICAL_BORDER)}`;
     });
   }
 

@@ -36,6 +36,12 @@ pnpm fmt
 pnpm lint:fix
 ```
 
+Publish all extensions to npm:
+
+```sh
+pnpm publish:extensions
+```
+
 ## Loading an extension
 
 Each extension lives under `extensions/<name>` and exports a default pi extension function from `index.ts`.

@@ -1,14 +1,18 @@
 # @tombell/pi-status
 
-Slim, minimal custom footer/status bar for Pi.
+Slim minimal status bar for Pi.
 
-Shows:
+## Features
 
-- current working directory
-- jj change id when inside a jj repo, otherwise git branch when inside a git repo
-- truncated session name when set
-- provider / model / thinking level
-- token usage and cost from the current session (cost hidden for subscription providers)
-- diff summary
+- Replaces Pi's footer with a slim minimal status bar.
+- Shows the current working directory.
+- Shows the jj change ID when inside a jj repo, otherwise the git branch when inside a git repo.
+- Shows the truncated session name when set.
+- Shows the provider, model, and thinking level.
+- Shows token usage and cost from the current session (cost hidden for subscription providers).
+- Shows a diff summary.
 
-Load the package as a Pi extension or point Pi at `extensions/pi-status` while developing.
+## Install
+
+- From npm: `pi install npm:@tombell/pi-status`
+- Local/quick test: `pi -e path/to/pi-status`

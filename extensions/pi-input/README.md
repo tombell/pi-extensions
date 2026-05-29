@@ -11,4 +11,4 @@ Replace Pi's input editor with a boxed input field.
 ## Install
 
 - From npm: `pi install npm:@tombell/pi-input`
-- Local/quick test: `pi -e ./extensions/pi-input`
+- Local/quick test: `pi -e path/to/pi-input`

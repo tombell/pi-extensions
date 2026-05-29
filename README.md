@@ -1,17 +1,17 @@
 # pi-extensions
 
-Personal extensions for the [pi coding agent](https://github.com/earendil-works/pi-coding-agent).
+Personal extensions for the [Pi coding agent](https://github.com/earendil-works/pi-coding-agent).
 
-This repo is a small pnpm workspace containing local TypeScript extensions that can be loaded by pi during development.
+This repo is a small pnpm workspace containing local TypeScript extensions that can be loaded by Pi during development.
 
 ## Extensions
 
-- `@tombell/pi-exit` — adds an `exit` command and handles plain `exit` input to shut down pi.
-- `@tombell/pi-plan` — adds a read-only planning mode toggle via `/plan`, `ctrl+alt+p`, or `--plan`.
-- `@tombell/pi-diff` — adds `/diff` and `/changed-files` commands for files edited/written in the current pi session.
-- `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes their skills/prompts to pi.
-- `@tombell/pi-input` — replaces the default pi input editor with a fully enclosed box-style input field.
-- `@tombell/pi-sessions` — list sessions for the current project/cwd and mark/delete old sessions.
+- `@tombell/pi-exit` — adds an `/exit` command and handles plain `exit` input to shut down Pi.
+- `@tombell/pi-plan` — adds a read-only planning mode toggle via `/plan`, `Ctrl+Alt+P`, or `--plan`.
+- `@tombell/pi-diff` — adds `/diff` and `/changed-files` commands for files changed during the current Pi session.
+- `@tombell/pi-codex-plugins` — discovers enabled Codex plugins and exposes them as Pi skills and prompts.
+- `@tombell/pi-input` — replaces Pi's input editor with a boxed input field.
+- `@tombell/pi-sessions` — adds an interactive session manager for Pi projects and directories.
 - `@tombell/pi-status` — replaces Pi's footer with a slim minimal status bar.
 
 ## Development
@@ -45,9 +45,9 @@ pnpm publish:extensions
 
 ## Loading an extension
 
-Each extension lives under `extensions/<name>` and exports a default pi extension function from `index.ts`.
+Each extension lives under `extensions/<name>` and exports a default Pi extension function from `index.ts`.
 
-When developing locally, point pi at the extension package or add it to your pi configuration according to the pi extension loading docs.
+When developing locally, point Pi at the extension package or add it to your Pi configuration according to the Pi extension loading docs.
 
 ## License
 

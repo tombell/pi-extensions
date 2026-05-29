@@ -16,6 +16,10 @@ import {
   visibleWidth,
 } from "@earendil-works/pi-tui";
 
+type PickerAction =
+  | { type: "close" }
+  | { type: "rename"; session: SessionListItem };
+
 type SessionListItem = {
   index: number;
   path: string;
@@ -118,14 +122,14 @@ class SessionPicker implements Focusable {
     private readonly ctx: ExtensionContext,
     private readonly sessions: SessionListItem[],
     private readonly marked: Set<string>,
-    private readonly onClose: () => void,
+    private readonly onAction: (action: PickerAction) => void,
   ) {
     this.doneIndex = this.sessions.length;
   }
 
   handleInput(data: string): void {
     if (matchesKey(data, "escape")) {
-      this.onClose();
+      this.onAction({ type: "close" });
       return;
     }
 
@@ -143,7 +147,15 @@ class SessionPicker implements Focusable {
 
     if (this.selected === this.doneIndex) {
       if (matchesKey(data, "return")) {
-        this.onClose();
+        this.onAction({ type: "close" });
+      }
+      return;
+    }
+
+    if (matchesKey(data, "r")) {
+      const session = this.sessions[this.selected];
+      if (session) {
+        this.onAction({ type: "rename", session });
       }
       return;
     }
@@ -175,7 +187,7 @@ class SessionPicker implements Focusable {
 
     const header = this.ctx.ui.theme.fg(
       "dim",
-      "Mark/unmark sessions for deletion (↑/↓ select, space/enter toggle, enter done, esc close)",
+      "Mark/unmark sessions for deletion (↑/↓ select, space/enter toggle, r rename, enter done, esc close)",
     );
     lines.push(truncateLine(header));
 
@@ -244,12 +256,44 @@ export default function sessionManagerExtension(pi: ExtensionAPI): void {
 
     const state = markedByCwd.get(cwdKey(ctx.cwd)) ?? setMarked(ctx, new Set<string>());
 
-    await ctx.ui.custom<void>((_tui, _theme, _keybindings, done) => {
-      const picker = new SessionPicker(ctx, sessions, state, () => {
-        done(undefined);
+    let currentSessions = sessions;
+
+    while (true) {
+      // eslint-disable-next-line no-await-in-loop -- picker actions are intentionally sequential
+      const action = await ctx.ui.custom<PickerAction>((_tui, _theme, _keybindings, done) => {
+        const picker = new SessionPicker(ctx, currentSessions, state, (nextAction) => {
+          done(nextAction);
+        });
+        return picker;
       });
-      return picker;
-    });
+
+      if (!action || action.type === "close") {
+        break;
+      }
+
+      const currentName = action.session.name ?? "";
+      // eslint-disable-next-line no-await-in-loop -- rename prompt depends on selected picker action
+      const nextName = await ctx.ui.input("Rename session", currentName || "Session name");
+      if (nextName === undefined) {
+        continue;
+      }
+
+      const trimmedName = nextName.trim();
+      if (!trimmedName) {
+        ctx.ui.notify("Session name cannot be empty.", "warning");
+        continue;
+      }
+
+      try {
+        SessionManager.open(action.session.path).appendSessionInfo(trimmedName);
+        ctx.ui.notify(`Renamed session to ${trimmedName}`, "info");
+        // eslint-disable-next-line no-await-in-loop -- refresh after each rename before reopening picker
+        currentSessions = await refreshSessions(ctx);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        ctx.ui.notify(`Failed to rename session: ${message}`, "error");
+      }
+    }
 
     updateStatus(ctx);
   }

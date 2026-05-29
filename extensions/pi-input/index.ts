@@ -22,7 +22,7 @@ class EnclosedInputEditor extends CustomEditor {
 
     return innerLines.map((line, index) => {
       const isTop = index === 0;
-      const isBottom = index === innerLines.length - 1;
+      const isBottom = index === innerLines.length - 1 && this.isHorizontalBorder(line);
 
       if (isTop) {
         return `${this.borderColor(TOP_LEFT_CORNER)}${this.fitLine(line, innerWidth, "─")}${this.borderColor(TOP_RIGHT_CORNER)}`;

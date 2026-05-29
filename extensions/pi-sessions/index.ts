@@ -1,4 +1,4 @@
-import { stat } from "node:fs/promises";
+import { stat, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 
 import type {
@@ -18,6 +18,7 @@ import {
 
 type PickerAction =
   | { type: "close" }
+  | { type: "delete" }
   | { type: "rename"; session: SessionListItem };
 
 type SessionListItem = {
@@ -152,6 +153,13 @@ class SessionPicker implements Focusable {
       return;
     }
 
+    if (matchesKey(data, "d")) {
+      if (this.marked.size > 0) {
+        this.onAction({ type: "delete" });
+      }
+      return;
+    }
+
     if (matchesKey(data, "r")) {
       const session = this.sessions[this.selected];
       if (session) {
@@ -187,7 +195,7 @@ class SessionPicker implements Focusable {
 
     const header = this.ctx.ui.theme.fg(
       "dim",
-      "Mark/unmark sessions for deletion (↑/↓ select, space/enter toggle, r rename, enter done, esc close)",
+      "Mark/unmark sessions for deletion (↑/↓ select, space/enter toggle, d delete marked, r rename, enter done, esc close)",
     );
     lines.push(truncateLine(header));
 
@@ -245,6 +253,42 @@ export default function sessionManagerExtension(pi: ExtensionAPI): void {
     return mapped;
   }
 
+  async function deleteMarkedSessions(
+    ctx: ExtensionContext,
+    sessions: SessionListItem[],
+    marked: Set<string>,
+  ): Promise<SessionListItem[]> {
+    const markedSessions = sessions.filter((session) => marked.has(session.path));
+    if (markedSessions.length === 0) {
+      ctx.ui.notify("No sessions marked for deletion.", "warning");
+      return sessions;
+    }
+
+    const confirmed = await ctx.ui.confirm(
+      "Delete marked sessions?",
+      `Permanently delete ${markedSessions.length} session${markedSessions.length === 1 ? "" : "s"}?`,
+    );
+    if (!confirmed) {
+      return sessions;
+    }
+
+    let deleted = 0;
+    for (const session of markedSessions) {
+      try {
+        // eslint-disable-next-line no-await-in-loop -- deletion is intentionally sequential for clearer errors
+        await unlink(session.path);
+        marked.delete(session.path);
+        deleted++;
+      } catch (error) {
+        const message = error instanceof Error ? error.message : String(error);
+        ctx.ui.notify(`Failed to delete ${shortId(session.id)}: ${message}`, "error");
+      }
+    }
+
+    ctx.ui.notify(`Deleted ${deleted} session${deleted === 1 ? "" : "s"}.`, "info");
+    return refreshSessions(ctx);
+  }
+
   async function runInteractiveMarking(
     ctx: ExtensionContext,
     sessions: SessionListItem[],
@@ -269,6 +313,12 @@ export default function sessionManagerExtension(pi: ExtensionAPI): void {
 
       if (!action || action.type === "close") {
         break;
+      }
+
+      if (action.type === "delete") {
+        // eslint-disable-next-line no-await-in-loop -- refresh picker after deletion
+        currentSessions = await deleteMarkedSessions(ctx, currentSessions, state);
+        continue;
       }
 
       const currentName = action.session.name ?? "";

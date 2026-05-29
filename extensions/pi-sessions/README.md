@@ -22,6 +22,7 @@ In interactive mode (TUI required):
 - Use arrow keys to navigate.
 - `space`/`enter` to mark or unmark a session.
 - `r` to rename the selected session.
+- `d` to delete marked sessions after confirmation.
 - `enter` on `Done` to close.
 - `escape` to close.
 

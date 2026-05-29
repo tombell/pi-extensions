@@ -1,18 +1,15 @@
 # @tombell/pi-exit
 
-A tiny Pi extension that adds a clean way to quit:
-
-- `/exit` command
-- plain `exit` input in interactive mode
+Tiny Pi extension that provides a clean way to quit.
 
 ## Features
 
-- Registers an `/exit` command that calls `ctx.shutdown()`.
-- Hooks the `input` event so typing `exit` exits immediately.
+- Adds an `/exit` command that calls `ctx.shutdown()`.
+- Hooks the `input` event so typing `exit` exits immediately in interactive mode.
 
 ## Commands
 
-- `/exit` — exit Pi.
+- `/exit` — exit Pi
 
 ## Install
 

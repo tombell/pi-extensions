@@ -1,27 +1,27 @@
 # @tombell/pi-sessions
 
-Interactive session manager for Pi projects/cwd.
+Interactive session manager for Pi projects and working directories.
 
 ## Features
 
-- `/sessions` command to open an interactive picker UI.
-- Loads sessions via `SessionManager.list(ctx.cwd)`.
-- Lets you mark/unmark sessions for deletion (interactive workflow).
-- Updates TUI status with total and marked session counts.
-- Clears state cleanly on session shutdown.
+- Adds a `/sessions` command that opens an interactive picker UI.
+- Loads sessions with `SessionManager.list(ctx.cwd)`.
+- Lets you mark and unmark sessions for deletion.
+- Updates the TUI status with total/marked session counts.
+- Clears state cleanly when a session is shut down.
 
 ## Commands
 
-- `/sessions` — open session manager.
+- `/sessions` — open the session manager
 
 ## Usage
 
-Run in interactive mode (TUI required):
+In interactive mode (TUI required):
 
-- Arrow keys to navigate
-- `space`/`enter` to mark/unmark
-- `enter` on `Done` to close
-- `escape` to close
+- Use arrow keys to navigate.
+- `space`/`enter` to mark or unmark a session.
+- `enter` on `Done` to close.
+- `escape` to close.
 
 ## Install
 

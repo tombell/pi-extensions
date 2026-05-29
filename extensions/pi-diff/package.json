@@ -1,17 +1,22 @@
 {
   "name": "@tombell/pi-diff",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "private": false,
+  "keywords": [
+    "pi-package"
+  ],
   "type": "module",
   "main": "./index.ts",
   "exports": "./index.ts",
-  "pi": {
-    "extensions": ["./index.ts"]
+  "publishConfig": {
+    "access": "public"
   },
   "peerDependencies": {
     "@earendil-works/pi-coding-agent": "*"
   },
-  "publishConfig": {
-    "access": "public"
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
   }
 }

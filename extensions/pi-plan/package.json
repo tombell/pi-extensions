@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-plan",
   "version": "0.0.2",
+  "description": "Read-only planning mode for safe investigation before editing",
   "private": false,
   "keywords": [
     "pi-package"

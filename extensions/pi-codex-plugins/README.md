@@ -1,6 +1,6 @@
 # @tombell/pi-codex-plugins
 
-Dynamically discovers enabled Codex plugins and exposes them in Pi as skills and prompts.
+Discover enabled Codex plugins and expose them as Pi skills and prompts.
 
 ## Features
 

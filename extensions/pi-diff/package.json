@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-diff",
   "version": "0.0.2",
+  "description": "Show git diff for files changed during the current Pi session",
   "private": false,
   "keywords": [
     "pi-package"

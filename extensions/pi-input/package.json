@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-input",
   "version": "0.0.4",
+  "description": "Replace Pi's input editor with a boxed input field",
   "private": false,
   "keywords": [
     "pi-package"

@@ -1,6 +1,6 @@
 # @tombell/pi-input
 
-Replaces the default Pi input editor with a boxed input field while preserving behavior.
+Replace Pi's input editor with a boxed input field.
 
 ## Features
 

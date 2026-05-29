@@ -1,6 +1,6 @@
 # @tombell/pi-diff
 
-Shows `git diff` output for files changed during the current Pi session.
+Show git diff for files changed during the current Pi session.
 
 ## Features
 

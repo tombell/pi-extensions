@@ -1,6 +1,6 @@
 # @tombell/pi-plan
 
-Adds a read-only planning mode for safe investigation before making changes.
+Read-only planning mode for safe investigation before making changes.
 
 ## Features
 

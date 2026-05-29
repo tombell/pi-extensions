@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-codex-plugins",
   "version": "0.0.2",
+  "description": "Discover enabled Codex plugins and expose them as Pi skills and prompts",
   "private": false,
   "keywords": [
     "pi-package"

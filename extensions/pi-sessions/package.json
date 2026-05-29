@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-sessions",
   "version": "0.0.2",
+  "description": "Interactive session manager for Pi projects and directories",
   "private": false,
   "keywords": [
     "pi-package"

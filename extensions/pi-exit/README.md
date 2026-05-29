@@ -1,6 +1,6 @@
 # @tombell/pi-exit
 
-Tiny Pi extension that provides a clean way to quit.
+Quick command to exit Pi cleanly.
 
 ## Features
 

@@ -1,6 +1,6 @@
 # @tombell/pi-sessions
 
-Interactive session manager for Pi projects and working directories.
+Interactive session manager for Pi projects and directories.
 
 ## Features
 

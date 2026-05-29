@@ -1,6 +1,7 @@
 {
   "name": "@tombell/pi-exit",
   "version": "0.0.2",
+  "description": "Quick command to exit Pi cleanly",
   "private": false,
   "keywords": [
     "pi-package"

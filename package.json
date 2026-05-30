@@ -15,8 +15,8 @@
     "publish:extensions": "pnpm -r publish --access public --no-git-checks"
   },
   "devDependencies": {
-    "@earendil-works/pi-coding-agent": "0.75.5",
-    "@earendil-works/pi-tui": "^0.75.5",
+    "@earendil-works/pi-coding-agent": "^0.78.0",
+    "@earendil-works/pi-tui": "^0.78.0",
     "@types/node": "25.9.1",
     "oxfmt": "0.52.0",
     "oxlint": "1.67.0",

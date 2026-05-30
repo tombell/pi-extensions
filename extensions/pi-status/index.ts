@@ -4,6 +4,12 @@ import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-a
 
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
+import {
+  CODEX_USAGE_CACHE_TTL_MS,
+  fetchCodexUsageText,
+  isOpenAICodexProvider,
+  type CodexUsageState,
+} from "./codex-usage.ts";
 import { getDiffInfo, formatDiff, normalizeChangedPath, type DiffInfo } from "./diff.ts";
 import { contextColor, fmtCount, trunc, usesSubscription } from "./format.ts";
 import { getUsage } from "./usage.ts";
@@ -31,15 +37,50 @@ export default function piStatus(pi: ExtensionAPI): void {
     ].join(" ");
   }
 
-  function formatModel(theme: ExtensionContext["ui"]["theme"], model: string, thinking: string): string {
+  function formatModel(
+    theme: ExtensionContext["ui"]["theme"],
+    model: string,
+    thinking: string,
+  ): string {
     const text = trunc(`${model}${thinking}`, 42);
-    return thinkingLevel ? theme.getThinkingBorderColor(thinkingLevel)(text) : theme.fg("dim", text);
+    return thinkingLevel
+      ? theme.getThinkingBorderColor(thinkingLevel)(text)
+      : theme.fg("dim", text);
   }
 
   let thinkingLevel: ReturnType<ExtensionAPI["getThinkingLevel"]> | undefined;
   let vcs: VcsInfo = { kind: "none", label: "" };
   let diff: DiffInfo = { files: 0, insertions: 0, deletions: 0 };
+  let codexUsage: CodexUsageState = { loading: false };
   const changedPaths = new Set<string>();
+
+  async function refreshCodexUsage(
+    piCtx: ExtensionContext,
+    requestRender?: () => void,
+  ): Promise<void> {
+    if (!isOpenAICodexProvider(piCtx.model?.provider)) {
+      codexUsage = { loading: false };
+      requestRender?.();
+      return;
+    }
+
+    if (codexUsage.loading) return;
+    if (codexUsage.fetchedAt && Date.now() - codexUsage.fetchedAt < CODEX_USAGE_CACHE_TTL_MS)
+      return;
+
+    codexUsage = { ...codexUsage, loading: true };
+    requestRender?.();
+    try {
+      codexUsage = {
+        text: await fetchCodexUsageText(piCtx),
+        loading: false,
+        fetchedAt: Date.now(),
+      };
+    } catch {
+      codexUsage = { text: undefined, loading: false, fetchedAt: Date.now() };
+    }
+    requestRender?.();
+  }
 
   async function refresh(piCtx: ExtensionContext, requestRender?: () => void): Promise<void> {
     vcs = await getVcsInfo(pi, piCtx);
@@ -50,6 +91,11 @@ export default function piStatus(pi: ExtensionAPI): void {
 
   pi.on("thinking_level_select", async (event) => {
     thinkingLevel = event.level;
+  });
+
+  pi.on("model_select", async (_event, ctx) => {
+    codexUsage = { loading: false };
+    await refreshCodexUsage(ctx);
   });
 
   pi.on("tool_call", async (event, ctx) => {
@@ -67,9 +113,13 @@ export default function piStatus(pi: ExtensionAPI): void {
     let disposed = false;
     ctx.ui.setFooter((tui, theme, footerData) => {
       void refresh(ctx, () => tui.requestRender());
+      void refreshCodexUsage(ctx, () => tui.requestRender());
 
       const unsub = footerData.onBranchChange(() => void refresh(ctx, () => tui.requestRender()));
-      const interval = setInterval(() => void refresh(ctx, () => tui.requestRender()), 5_000);
+      const interval = setInterval(() => {
+        void refresh(ctx, () => tui.requestRender());
+        void refreshCodexUsage(ctx, () => tui.requestRender());
+      }, 5_000);
 
       return {
         dispose() {
@@ -106,12 +156,21 @@ export default function piStatus(pi: ExtensionAPI): void {
             ? contextColor(usage.context, contextWindow)
             : "dim";
 
+          const codexUsageText = isOpenAICodexProvider(ctx.model?.provider)
+            ? codexUsage.text
+              ? theme.fg("dim", codexUsage.text)
+              : codexUsage.loading
+                ? theme.fg("dim", "checking")
+                : undefined
+            : undefined;
+
           const parts = [
             theme.fg("accent", cwd),
             sessionName ? theme.fg("muted", trunc(sessionName, 24)) : undefined,
             formatVcs(theme),
             formatModel(theme, model, thinking),
             usageText,
+            codexUsageText,
             contextText ? theme.fg(contextTextColor, contextText) : undefined,
             formatDiffStats(theme),
           ].filter((part): part is string => Boolean(part));

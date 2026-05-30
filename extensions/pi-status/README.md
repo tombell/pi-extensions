@@ -10,6 +10,7 @@ Slim minimal status bar for Pi.
 - Shows the truncated session name when set.
 - Shows the provider, model, and thinking level.
 - Shows token usage and cost from the current session (cost hidden for subscription providers).
+- Shows OpenAI Codex subscription usage when the provider is `openai-codex` (`5h` and weekly as `wk`).
 - Shows a diff summary.
 
 ## Install

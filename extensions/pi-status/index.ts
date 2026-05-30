@@ -174,7 +174,7 @@ export default function piStatus(pi: ExtensionAPI): void {
             formatDiffStats(theme),
           ].filter((part): part is string => Boolean(part));
 
-          let line = parts.join(theme.fg("dim", " │ "));
+          let line = parts.join(theme.fg("dim", " ❯ "));
           if (visibleWidth(line) > width) line = truncateToWidth(line, width, "…");
 
           return [line];

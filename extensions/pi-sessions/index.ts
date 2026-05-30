@@ -1,20 +1,14 @@
 import { stat, unlink } from "node:fs/promises";
 import { resolve } from "node:path";
 
-import type {
-  ExtensionAPI,
-  ExtensionContext,
-  SessionInfo,
-  ThemeColor,
-} from "@earendil-works/pi-coding-agent";
-
-import { SessionManager } from "@earendil-works/pi-coding-agent";
 import {
-  type Focusable,
-  matchesKey,
-  truncateToWidth,
-  visibleWidth,
-} from "@earendil-works/pi-tui";
+  SessionManager,
+  type ExtensionContext,
+  type SessionInfo,
+  type ExtensionAPI,
+  type ThemeColor,
+} from "@earendil-works/pi-coding-agent";
+import { type Focusable, matchesKey, truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 type PickerAction =
   | { type: "close" }
@@ -103,7 +97,9 @@ function formatPickerLine(
   const checkboxColor = isMarked ? "success" : "warning";
   const nameColor = "accent";
   const messageCountColor = isMarked ? "warning" : "muted";
-  const fileSize = isMarked ? theme.fg("warning", formatFileSize(item.fileSize)) : theme.fg("muted", formatFileSize(item.fileSize));
+  const fileSize = isMarked
+    ? theme.fg("warning", formatFileSize(item.fileSize))
+    : theme.fg("muted", formatFileSize(item.fileSize));
 
   const body = `${idx}. ${theme.fg(nameColor, displayName)} • ${theme.fg("dim", shortId(item.id))} • ${theme.fg(messageCountColor, `${item.messageCount} msgs`)} • ${theme.fg("text", fileSize)} • ${theme.fg("text", truncate(item.firstMessage, 48))} ${theme.fg("dim", `(${formatDate(item.modified)})`)}`;
 
@@ -202,15 +198,21 @@ class SessionPicker implements Focusable {
     for (let index = 0; index < this.sessions.length; index++) {
       const session = this.sessions[index]!;
       const isSelected = index === this.selected;
-      const row = formatPickerLine(session, this.marked.has(session.path), isSelected, this.ctx.ui.theme);
+      const row = formatPickerLine(
+        session,
+        this.marked.has(session.path),
+        isSelected,
+        this.ctx.ui.theme,
+      );
       lines.push(truncateLine(row));
     }
 
     const donePrefix = this.selected === this.doneIndex ? "> " : "  ";
     const doneLine = `${donePrefix}Done`;
-    const doneRow = this.selected === this.doneIndex
-      ? this.ctx.ui.theme.fg("success", `${doneLine} (${this.marked.size} selected)`) :
-        this.ctx.ui.theme.fg("dim", `${doneLine}`);
+    const doneRow =
+      this.selected === this.doneIndex
+        ? this.ctx.ui.theme.fg("success", `${doneLine} (${this.marked.size} selected)`)
+        : this.ctx.ui.theme.fg("dim", `${doneLine}`);
     lines.push(truncateLine(doneRow));
 
     return lines;

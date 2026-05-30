@@ -1,7 +1,6 @@
 import { basename } from "node:path";
 
 import type { ExtensionAPI, ExtensionContext } from "@earendil-works/pi-coding-agent";
-
 import { truncateToWidth, visibleWidth } from "@earendil-works/pi-tui";
 
 import {
